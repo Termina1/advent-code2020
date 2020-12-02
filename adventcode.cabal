@@ -25,6 +25,7 @@ source-repository head
 
 library
   exposed-modules:
+      Day2
       Lib
   other-modules:
       Paths_adventcode
