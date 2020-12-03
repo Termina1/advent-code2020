@@ -5,10 +5,11 @@ module Lib
 import Data.List.Split
 import Data.IntMap
 import Day2
+import Day3
 
 someFunc :: IO ()
 someFunc = do 
-  answer <- day2_2
+  answer <- day3_2
   putStrLn (show answer)
 
 
