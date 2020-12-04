@@ -6,10 +6,11 @@ import Data.List.Split
 import Data.IntMap
 import Day2
 import Day3
+import Day4
 
 someFunc :: IO ()
 someFunc = do 
-  answer <- day3_2
+  answer <- day4
   putStrLn (show answer)
 
 

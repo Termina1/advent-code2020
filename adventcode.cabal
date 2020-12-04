@@ -27,16 +27,23 @@ library
   exposed-modules:
       Day2
       Day3
+      Day4
       Lib
+      LibLib
   other-modules:
       Paths_adventcode
   hs-source-dirs:
       src
   build-depends:
       base >=4.7 && <5
+    , bytestring
+    , conduit
+    , conduit-extra
     , containers
     , hashmap
+    , mono-traversable
     , split
+    , transformers
   default-language: Haskell2010
 
 executable adventcode-exe
@@ -49,9 +56,14 @@ executable adventcode-exe
   build-depends:
       adventcode
     , base >=4.7 && <5
+    , bytestring
+    , conduit
+    , conduit-extra
     , containers
     , hashmap
+    , mono-traversable
     , split
+    , transformers
   default-language: Haskell2010
 
 test-suite adventcode-test
@@ -65,7 +77,12 @@ test-suite adventcode-test
   build-depends:
       adventcode
     , base >=4.7 && <5
+    , bytestring
+    , conduit
+    , conduit-extra
     , containers
     , hashmap
+    , mono-traversable
     , split
+    , transformers
   default-language: Haskell2010
