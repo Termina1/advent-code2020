@@ -29,6 +29,7 @@ dependencies:
 - conduit-extra
 - transformers
 - mono-traversable
+- sort
 
 library:
   source-dirs: src

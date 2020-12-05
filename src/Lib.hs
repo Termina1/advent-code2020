@@ -7,10 +7,11 @@ import Data.IntMap
 import Day2
 import Day3
 import Day4
+import Day5
 
 someFunc :: IO ()
 someFunc = do 
-  answer <- day4
+  answer <- day5_2
   putStrLn (show answer)
 
 
