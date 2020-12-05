@@ -3,8 +3,6 @@ module Day5
   ) where
 
 import Data.List.Split
-import Debug.Trace
-import Data.Sort
 
 search :: Char -> String -> Float
 search lower str = foldl (\acc x -> acc * 2 + (if x == lower then 0 else 1)) 0 str
@@ -27,7 +25,7 @@ findSeat tickets = let (max, min) = (maximum tickets, minimum tickets) in
 day5 :: IO Float
 day5 = do 
   contents <- readFile "day5.txt"
-  return $ maximum $  map parseSeatId (splitOn "\n" contents)
+  return $ maximum $ map parseSeatId (splitOn "\n" contents)
 
 day5_2 :: IO Float
 day5_2 = do 
