@@ -1,5 +1,6 @@
 module Day5
-  ( day5, day5_2
+  ( day5, 
+    day5_2
   ) where
 
 import Data.List.Split
@@ -19,8 +20,9 @@ parseSeatId bpstring = row * 8 + column
     (row, column) = parseBoardingPass bpstring
 
 findSeat :: [Float] -> Float
-findSeat tickets = let (max, min) = (maximum tickets, minimum tickets) in
-  (min + max) / 2 * (max - min + 1) - (sum tickets)
+findSeat tickets = (min + max) / 2 * (max - min + 1) - (sum tickets)
+  where
+    (max, min) = (maximum tickets, minimum tickets)
 
 day5 :: IO Float
 day5 = do 
