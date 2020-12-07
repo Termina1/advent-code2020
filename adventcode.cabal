@@ -30,6 +30,7 @@ library
       Day4
       Day5
       Day6
+      Day7
       Lib
       LibLib
   other-modules:
@@ -44,6 +45,8 @@ library
     , containers
     , hashmap
     , mono-traversable
+    , parsec
+    , pretty-simple
     , sort
     , split
     , transformers
@@ -65,6 +68,8 @@ executable adventcode-exe
     , containers
     , hashmap
     , mono-traversable
+    , parsec
+    , pretty-simple
     , sort
     , split
     , transformers
@@ -87,6 +92,8 @@ test-suite adventcode-test
     , containers
     , hashmap
     , mono-traversable
+    , parsec
+    , pretty-simple
     , sort
     , split
     , transformers

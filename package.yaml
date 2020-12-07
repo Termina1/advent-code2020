@@ -30,6 +30,8 @@ dependencies:
 - transformers
 - mono-traversable
 - sort
+- parsec
+- pretty-simple
 
 library:
   source-dirs: src
