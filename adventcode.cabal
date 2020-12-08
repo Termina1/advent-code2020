@@ -31,6 +31,7 @@ library
       Day5
       Day6
       Day7
+      Day8
       Lib
       LibLib
   other-modules:
@@ -38,7 +39,8 @@ library
   hs-source-dirs:
       src
   build-depends:
-      base >=4.7 && <5
+      array
+    , base >=4.7 && <5
     , bytestring
     , conduit
     , conduit-extra
@@ -61,6 +63,7 @@ executable adventcode-exe
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       adventcode
+    , array
     , base >=4.7 && <5
     , bytestring
     , conduit
@@ -85,6 +88,7 @@ test-suite adventcode-test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       adventcode
+    , array
     , base >=4.7 && <5
     , bytestring
     , conduit
