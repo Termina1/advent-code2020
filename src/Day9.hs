@@ -5,7 +5,6 @@ module Day9
 
 import Data.List.Split
 import qualified Data.IntMap as IMap
-import Debug.Trace
 
 lastNum :: Int
 lastNum = 25
