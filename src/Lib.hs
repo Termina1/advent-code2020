@@ -11,10 +11,11 @@ import Day5
 import Day6
 import Day7
 import Day8
+import Day9
 
 someFunc :: IO ()
 someFunc = do 
-  answer <- day8_2
+  answer <- day9_2
   putStrLn (show answer)
 
 
