@@ -2,7 +2,6 @@ module Lib
   ( someFunc
   ) where
 
-import Data.List.Split
 import Data.IntMap
 import Day2
 import Day3
@@ -12,18 +11,13 @@ import Day6
 import Day7
 import Day8
 import Day9
+import Day10
+import LibLib
 
 someFunc :: IO ()
 someFunc = do 
-  answer <- day9_2
+  answer <- day10_2
   putStrLn (show answer)
-
-
-parseIntArray :: String -> IO [Int]
-parseIntArray filename = do 
-  contents <- readFile filename
-  return $ Prelude.map read (Prelude.filter (\n -> (length n) > 0) (splitOn "\n" contents))
-
 
 find2Sum :: [Int] -> Int -> IntMap Int -> Int
 find2Sum [] target hm = 0

@@ -1,12 +1,13 @@
 {-# LANGUAGE FlexibleContexts #-}
 
 module LibLib
-  ( splitOnSeq
+  ( splitOnSeq, parseIntArray
   ) where
 
 import qualified Data.Sequences as Seq
 import Data.MonoTraversable
 import Data.List
+import Data.List.Split
 import Data.Conduit
 import Control.Monad
 
@@ -28,3 +29,9 @@ splitOnSeq f =
       where
         (x, y) = let (x : z) = Seq.splitSeq f t in
           (x, mconcat $ intersperse f z)
+
+
+parseIntArray :: String -> IO [Int]
+parseIntArray filename = do 
+  contents <- readFile filename
+  return $ Prelude.map read (Prelude.filter (\n -> (length n) > 0) (splitOn "\n" contents))
