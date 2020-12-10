@@ -22,9 +22,7 @@ prepareJolts nums = let sorted = sort nums in
 day10 :: IO Int
 day10 = do
   numbers <- parseIntArray "day10.txt"
-  putStrLn (show $ prepareJolts numbers)
-  let (x, y, z) = countJoltageDifference $ prepareJolts numbers in do
-    putStrLn $ show (x, y, z)
+  let (x, y, z) = countJoltageDifference $ prepareJolts numbers in
     return (x * y)
 
 
