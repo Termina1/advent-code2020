@@ -6,7 +6,7 @@ module Day11
 import Prelude hiding (Left, Right)
 
 import Data.List.Split
-import qualified Data.IntMap as IM
+import Data.Array
 import Data.List
 import LibLib
 
@@ -16,17 +16,17 @@ data Seat = Occupied | Floor | Empty
 data Direction = Up | Down | Left | Right | UpLeft | UpRight | DownLeft | DownRight
   deriving (Show)
 
-type SeatScheme = IM.IntMap (IM.IntMap Seat)
-type SeatRow = IM.IntMap Seat
+type SeatRow = Array Int Seat
+type SeatScheme = Array Int SeatRow
 
 allDirections :: [Direction]
 allDirections = [Up, Down, Left, Right, UpLeft, UpRight, DownLeft, DownRight]
 
 pprint :: SeatScheme -> String
-pprint scheme = intercalate "\n" (map pprintRow (IM.elems scheme))
-  where 
+pprint scheme = intercalate "\n" (map pprintRow (elems scheme))
+  where
     pprintRow :: SeatRow -> String
-    pprintRow row = concat $ map pprintSeat (IM.elems row)
+    pprintRow row = concat $ map pprintSeat (elems row)
 
     pprintSeat :: Seat -> String
     pprintSeat Occupied = "#"
@@ -34,7 +34,8 @@ pprint scheme = intercalate "\n" (map pprintRow (IM.elems scheme))
     pprintSeat Empty = "L"
 
 readSeatRow :: String -> SeatRow
-readSeatRow row = foldl (\acc (index, el) -> IM.insert index (charToSeat el) acc) IM.empty (zip [0..] row)
+readSeatRow row = let indexedList = map (\(index, el) -> (index, (charToSeat el))) (zip [0..] row) in
+  array (0, (length indexedList) - 1) indexedList
   where
     charToSeat '#' = Occupied
     charToSeat '.' = Floor
@@ -43,7 +44,8 @@ readSeatRow row = foldl (\acc (index, el) -> IM.insert index (charToSeat el) acc
 readSeatsScheme :: String -> IO SeatScheme
 readSeatsScheme filename = do
   content <- readFile filename
-  return $ foldl (\acc (index, el) -> IM.insert index (readSeatRow el) acc) IM.empty (zip [0..] (splitOn "\n" content))
+  let indexedList = map (\(index, el) -> (index, readSeatRow el)) (zip [0..] (splitOn "\n" content)) in
+    return $ array (0, (length indexedList) - 1) indexedList
 
 indexGenerator :: (Int, Int) -> Direction -> (Int, Int)
 indexGenerator (i, j) Up = (i + 1, j)
@@ -55,14 +57,18 @@ indexGenerator (i, j) UpRight = (i + 1, j + 1)
 indexGenerator (i, j) DownLeft = (i - 1, j - 1)
 indexGenerator (i, j) DownRight = (i -  1, j + 1)
 
+safeLookup :: (Ix i) => i -> Array i e -> Maybe e
+safeLookup i arr = let (min, max) = bounds arr in
+  if i >= min && i <= max then Just (arr ! i) else Nothing
+
 countVisibleOccupance :: SeatScheme -> Int -> Int -> Int
 countVisibleOccupance scheme i j = sum $ map (findFirstVisibleSeat scheme (i, j)) allDirections
   where
     findFirstVisibleSeat :: SeatScheme -> (Int, Int) -> Direction -> Int
     findFirstVisibleSeat scheme index direction = let (i, j) = indexGenerator index direction in
-      case IM.lookup i scheme of
+      case safeLookup i scheme of
         Nothing -> 0
-        Just row -> case IM.lookup j row of 
+        Just row -> case safeLookup j row of
           Nothing -> 0
           Just Floor -> findFirstVisibleSeat scheme (i, j) direction
           Just Occupied -> 1
@@ -72,21 +78,21 @@ countAdjacentOccupancy :: SeatScheme -> Int -> Int -> Int
 countAdjacentOccupancy scheme i j = foldl (occupant scheme) 0 (map (indexGenerator (i, j)) allDirections)
   where
     occupant :: SeatScheme -> Int -> (Int, Int) -> Int
-    occupant scheme acc (i, j) = case IM.lookup i scheme of 
+    occupant scheme acc (i, j) = case safeLookup i scheme of
       Nothing -> acc
-      Just row -> case IM.lookup j row of 
+      Just row -> case safeLookup j row of
         Nothing -> acc
         (Just Occupied) -> acc + 1
         (Just _) -> acc
 
 lifeIteration :: Int -> (SeatScheme -> Int -> Int -> Int) -> SeatScheme -> SeatScheme
-lifeIteration maxOccupant countOccupancy scheme = IM.foldrWithKey (outterCycle scheme) IM.empty scheme
+lifeIteration maxOccupant countOccupancy scheme = array (bounds scheme) $ map (outterCycle scheme) (assocs scheme)
   where
-    outterCycle :: SeatScheme -> Int -> SeatRow -> SeatScheme -> SeatScheme
-    outterCycle scheme i row nscheme = IM.insert i (IM.foldrWithKey (innerCycle scheme i) IM.empty row) nscheme
+    outterCycle :: SeatScheme -> (Int, SeatRow) -> (Int, SeatRow)
+    outterCycle scheme (i, row) = (i, array (bounds row) $ map (innerCycle scheme i) (assocs row))
 
-    innerCycle :: SeatScheme -> Int -> Int -> Seat -> SeatRow -> SeatRow
-    innerCycle scheme i j seat row = IM.insert j (updateSeat scheme i j seat) row
+    innerCycle :: SeatScheme -> Int -> (Int, Seat) -> (Int, Seat)
+    innerCycle scheme i (j, seat) = (j, updateSeat scheme i j seat)
 
     updateSeat :: SeatScheme -> Int -> Int -> Seat -> Seat
     updateSeat scheme i j Floor = Floor
@@ -95,7 +101,7 @@ lifeIteration maxOccupant countOccupancy scheme = IM.foldrWithKey (outterCycle s
        if occup >= maxOccupant then Empty else Occupied
 
 countOccupiedSeats :: SeatScheme -> Int
-countOccupiedSeats scheme = foldr (\el acc -> foldr occupant acc el) 0 scheme
+countOccupiedSeats scheme = foldr (\el acc -> foldr occupant acc (elems el)) 0 (elems scheme)
   where
     occupant Occupied acc = acc + 1
     occupant _ acc = acc
@@ -104,7 +110,7 @@ life :: (SeatScheme -> Int -> Int -> Int) -> Int -> SeatScheme -> SeatScheme
 life countOccupancy maxOccupant scheme = loopLife scheme (lifeIteration maxOccupant countOccupancy scheme)
   where
     loopLife oldScheme newScheme = if oldScheme == newScheme
-      then newScheme 
+      then newScheme
       else loopLife newScheme (lifeIteration maxOccupant countOccupancy newScheme)
 
 day11 :: IO Int
