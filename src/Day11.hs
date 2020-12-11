@@ -62,17 +62,17 @@ safeLookup i arr = let (min, max) = bounds arr in
   if i >= min && i <= max then Just (arr ! i) else Nothing
 
 countVisibleOccupance :: SeatScheme -> Int -> Int -> Int
-countVisibleOccupance scheme i j = sum $ map (findFirstVisibleSeat scheme (i, j)) allDirections
+countVisibleOccupance scheme i j = foldl (findFirstVisibleSeat scheme (i, j)) 0 allDirections
   where
-    findFirstVisibleSeat :: SeatScheme -> (Int, Int) -> Direction -> Int
-    findFirstVisibleSeat scheme index direction = let (i, j) = indexGenerator index direction in
+    findFirstVisibleSeat :: SeatScheme -> (Int, Int) -> Int -> Direction -> Int
+    findFirstVisibleSeat scheme index acc direction = let (i, j) = indexGenerator index direction in
       case safeLookup i scheme of
-        Nothing -> 0
+        Nothing -> acc
         Just row -> case safeLookup j row of
-          Nothing -> 0
-          Just Floor -> findFirstVisibleSeat scheme (i, j) direction
-          Just Occupied -> 1
-          Just Empty -> 0
+          Nothing -> acc
+          Just Floor -> findFirstVisibleSeat scheme (i, j) acc direction
+          Just Occupied -> acc + 1
+          Just Empty -> acc
 
 countAdjacentOccupancy :: SeatScheme -> Int -> Int -> Int
 countAdjacentOccupancy scheme i j = foldl (occupant scheme) 0 (map (indexGenerator (i, j)) allDirections)

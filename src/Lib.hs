@@ -16,7 +16,7 @@ import Day11
 import LibLib
 
 someFunc :: IO ()
-someFunc = do 
+someFunc = do
   answer <- day11_2
   putStrLn (show answer)
 
@@ -29,12 +29,12 @@ find2Sum (head : tail) target hm =
 
 find3sum :: [Int] -> [Int] -> Int
 find3sum [] _ = 0
-find3sum (head : tail) start = 
+find3sum (head : tail) start =
   let sum2 = find2Sum (start ++ tail) (2020 - head) empty in
   if sum2 > 0 then sum2 * head else (find3sum tail (start ++ [head]))
 
 day1 :: IO Int
-day1 = do 
+day1 = do
   array <- parseIntArray "day1.txt"
   return (find2Sum array 2020 empty)
 
