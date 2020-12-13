@@ -33,13 +33,13 @@ findClosestBus dep timetable = foldl findClosestBusHelper (maxBound, maxBound) t
         if nwclosdep < closestdep then (el, nwclosdep) else acc
     findClosestBusHelper acc OutOfService = acc
 
-chineseReminder :: [(Int, Int)] -> Int
-chineseReminder nums = let prod = foldl (\acc (n, a) -> acc * n) 1 nums in
-  let sum = (foldl (chineseReminderHelper prod) 0 nums) in
+chineseRemainder :: [(Int, Int)] -> Int
+chineseRemainder nums = let prod = foldl (\acc (n, a) -> acc * n) 1 nums in
+  let sum = (foldl (chineseRemainderHelper prod) 0 nums) in
     sum `mod` prod
   where
-    chineseReminderHelper :: Int -> Int -> (Int, Int) -> Int
-    chineseReminderHelper prod sum (n, a) = let p = prod `div` n in
+    chineseRemainderHelper :: Int -> Int -> (Int, Int) -> Int
+    chineseRemainderHelper prod sum (n, a) = let p = prod `div` n in
       sum + a * (mulInv p n) * p
 
     mulInv :: Int -> Int -> Int
@@ -63,4 +63,4 @@ day13_2 :: IO Int
 day13_2 = do
   (_, timetable) <- parseFile "day13.txt"
   let ftimetable = timeTableToConstraints $ (zip (reverse [0..((length timetable) - 1)]) timetable) in do
-    return $ (chineseReminder ftimetable) - (snd $ head ftimetable)
+    return $ (chineseRemainder ftimetable) - (snd $ head ftimetable)
