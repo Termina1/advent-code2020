@@ -26,13 +26,14 @@ dependencies:
 - containers
 - conduit
 - bytestring
-- conduit-extra 
+- conduit-extra
 - transformers
 - mono-traversable
 - sort
 - parsec
 - pretty-simple
 - array
+- streaming
 
 library:
   source-dirs: src

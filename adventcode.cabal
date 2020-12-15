@@ -58,6 +58,7 @@ library
     , pretty-simple
     , sort
     , split
+    , streaming
     , transformers
   default-language: Haskell2010
 
@@ -82,6 +83,7 @@ executable adventcode-exe
     , pretty-simple
     , sort
     , split
+    , streaming
     , transformers
   default-language: Haskell2010
 
@@ -107,5 +109,6 @@ test-suite adventcode-test
     , pretty-simple
     , sort
     , split
+    , streaming
     , transformers
   default-language: Haskell2010

@@ -3,10 +3,12 @@ module Day15
     day15_2
   ) where
 
-import qualified Data.IntMap as IM
-import Data.List
+import Data.Array.IO
+import Control.Monad
+import qualified Streaming.Prelude as S
+import Streaming
 
-type Memory = IM.IntMap Int
+type Memory = IOArray Int Int
 
 input :: [Int]
 input = [1,20,8,12,0]
@@ -14,26 +16,40 @@ input = [1,20,8,12,0]
 startPrev :: Int
 startPrev = 14
 
-inputMap :: IM.IntMap Int
-inputMap = foldr (\(num, el) acc -> IM.insert el num acc) IM.empty (zip [1..] input)
+inputMap :: IO Memory
+inputMap = do
+  arr <- newArray (0, 30000001) (-1)
+  forM (zip [1..] input) (\(i, el) -> writeArray arr el i)
+  return arr
 
-next :: Memory -> Int -> Int -> (Int, Memory)
-next mem prev rnd = case IM.lookup prev mem of
-  Nothing -> (0, IM.insert prev (rnd - 1) mem)
-  Just k -> (rnd - k - 1, IM.insert prev (rnd - 1) mem)
+next :: Memory -> Int -> Int -> IO Int
+next mem prev rnd = do
+  el <- readArray mem prev
+  case el of
+    -1 -> do
+      writeArray mem prev (rnd - 1)
+      return 0
+    k -> do
+      writeArray mem prev (rnd - 1)
+      return (rnd - k - 1)
 
-
-gameList :: Memory -> [Int]
-gameList mem = input ++ [startPrev] ++ (snd $ mapAccumL iterateG (mem, startPrev) [((length input) + 2)..])
+gameList :: Memory -> Stream (Of Int) IO ()
+gameList mem = do
+  S.each (input ++ [startPrev]) >> S.unfoldr (iterateG mem) (startPrev, ((length input) + 2))
   where
-    iterateG :: (Memory, Int) -> Int -> ((Memory, Int), Int)
-    iterateG (mem, prev) rnd =  let (num, nwmem) = next mem prev rnd in
-      ((nwmem, num), num)
+    iterateG :: Memory -> (Int, Int) -> IO (Either () (Int, (Int, Int)))
+    iterateG mem (prev, rnd) = do
+      num <- next mem prev rnd
+      return $ Right $ (num, (num, rnd + 1))
 
 day15 :: IO Int
 day15 = do
-  return $ head $ drop (2020 - 1) (gameList inputMap)
+  inputMem <- inputMap
+  S.stdoutLn $ S.show $ S.take 1 $ S.drop (2020 - 1) $ gameList inputMem
+  return 1
 
 day15_2 :: IO Int
 day15_2 = do
-  return $ head $ drop (30000000 - 1) (gameList inputMap)
+  inputMem <- inputMap
+  S.stdoutLn $ S.show $ S.take 1 $ S.drop (30000000 - 1) $ gameList inputMem
+  return 1
