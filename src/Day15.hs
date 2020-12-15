@@ -8,7 +8,7 @@ import Control.Monad
 import qualified Streaming.Prelude as S
 import Streaming
 
-type Memory = IOArray Int Int
+type Memory = IOUArray Int Int
 
 input :: [Int]
 input = [1,20,8,12,0]
