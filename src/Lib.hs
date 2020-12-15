@@ -16,11 +16,12 @@ import Day11
 import Day12
 import Day13
 import Day14
+import Day15
 import LibLib
 
 someFunc :: IO ()
 someFunc = do
-  answer <- day14_2
+  answer <- day15_2
   putStrLn (show answer)
 
 find2Sum :: [Int] -> Int -> IntMap Int -> Int
