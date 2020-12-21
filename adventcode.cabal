@@ -36,6 +36,7 @@ library
       Day18
       Day19
       Day2
+      Day21
       Day3
       Day4
       Day5
@@ -56,7 +57,6 @@ library
     , conduit
     , conduit-extra
     , containers
-    , hashmap
     , mono-traversable
     , parsec
     , pretty-simple
@@ -64,6 +64,7 @@ library
     , split
     , streaming
     , transformers
+    , unordered-containers
   default-language: Haskell2010
 
 executable adventcode-exe
@@ -81,7 +82,6 @@ executable adventcode-exe
     , conduit
     , conduit-extra
     , containers
-    , hashmap
     , mono-traversable
     , parsec
     , pretty-simple
@@ -89,6 +89,7 @@ executable adventcode-exe
     , split
     , streaming
     , transformers
+    , unordered-containers
   default-language: Haskell2010
 
 test-suite adventcode-test
@@ -107,7 +108,6 @@ test-suite adventcode-test
     , conduit
     , conduit-extra
     , containers
-    , hashmap
     , mono-traversable
     , parsec
     , pretty-simple
@@ -115,4 +115,5 @@ test-suite adventcode-test
     , split
     , streaming
     , transformers
+    , unordered-containers
   default-language: Haskell2010
