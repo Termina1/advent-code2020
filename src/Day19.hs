@@ -46,26 +46,22 @@ pprintG grammar = forM_ (assocs grammar) pprintGHelper
     pprintRule (Terminal char) = (show char)
 
 runAutomataWithDebug :: Grammar -> Rule -> String -> ParseResult
-runAutomataWithDebug grammar allr str = --runAutomata grammar allr str
-  trace ("Running stack " ++ (show allr) ++ ", string left: " ++ (show str)) (runAutomata grammar allr) str
+runAutomataWithDebug grammar allr str = runAutomata grammar allr str
+  --trace ("Running stack " ++ (show allr) ++ ", string left: " ++ (show str)) (runAutomata grammar allr) str
 
 runAutomata :: Grammar -> Rule -> String -> ParseResult
 runAutomata grammar (Terminal char) (curChar : str) = if char == curChar
   then Right (str, PTerminal char)
   else Left $ "Expected " ++ (show char) ++ " got " ++ (show curChar)
-
 runAutomata grammar TNumber str = let num = takeWhile isDigit str in
   if length num == 0
     then Left $ "Expected number got " ++ (show $ head str)
     else Right ((drop (length num) str), PNumber (read num))
 runAutomata grammar Epsilon str = Right (str, PEmpty)
-
 runAutomata grammar TChar (curChar : str) = if isLetter curChar
   then Right (str, PChar curChar)
   else Left $ "Expected any letter got " ++ (show curChar)
-
 runAutomata grammar (Expand num) str = runAutomataWithDebug grammar (grammar ! num) str >>= \(str, tree) -> return (str, PRule num tree)
-
 runAutomata grammar (Seq rule1 rule2) str =
   runAutomataWithDebug grammar rule1 str >>=
     (\(str, ltree) -> runAutomataWithDebug grammar rule2 str >>=
@@ -74,6 +70,29 @@ runAutomata grammar (Choice rule1 rule2) str = case runAutomataWithDebug grammar
   Left err -> runAutomataWithDebug grammar rule2 str
   Right result -> Right result
 runAutomata grammar rule "" = Left "Unexpected end of input"
+
+runAutomataWithDebug2 :: Grammar -> [Rule] -> String -> [Bool]
+runAutomataWithDebug2 grammar allr str = runAutomata2 grammar allr str
+  --trace ("Running stack " ++ (show allr) ++ ", string left: " ++ (show str)) (runAutomata2 grammar allr) str
+
+runAutomata2 :: Grammar -> [Rule] -> String -> [Bool]
+runAutomata2 grammar ((Terminal char) : tail) (curChar : str) = if char == curChar
+  then runAutomataWithDebug2 grammar tail str
+  else [False]
+runAutomata2 grammar (TNumber : tail) str = let num = takeWhile isDigit str in
+  if length num == 0
+    then [False]
+    else runAutomataWithDebug2 grammar tail (drop (length num) str)
+runAutomata2 grammar (Epsilon : tail) str = runAutomataWithDebug2 grammar tail str
+runAutomata2 grammar (TChar : tail) (curChar : str) = if isLetter curChar
+  then runAutomataWithDebug2 grammar tail str
+  else [False]
+runAutomata2 grammar ((Expand num) : tail) str = runAutomataWithDebug2 grammar ((grammar ! num) : tail) str
+runAutomata2 grammar ((Seq rule1 rule2) : tail) str = runAutomataWithDebug2 grammar (rule1 : rule2 : tail) str
+runAutomata2 grammar ((Choice rule1 rule2) : tail) str = (runAutomataWithDebug2 grammar (rule1 : tail) str) ++ (runAutomataWithDebug2 grammar (rule2 : tail) str)
+runAutomata2 grammar [] "" = [True]
+runAutomata2 grammar rule "" = [False]
+runAutomata2 grammar [] s = [False]
 
 parseGrammar :: ParseTree -> Either String Grammar
 parseGrammar tree = parseGrammarHelper tree >>= \rules -> Right $ array (0, 300) rules
@@ -115,9 +134,7 @@ parseGrammar tree = parseGrammarHelper tree >>= \rules -> Right $ array (0, 300)
     parseTerms n = Left $ "Expected term, got " ++ (show n)
 
 isCorrectSeq :: Grammar -> Rule -> String -> Bool
-isCorrectSeq grammar rule str = case runAutomata grammar rule str of
-  Left err -> False
-  Right (leftStr, tree) -> (length leftStr) == 0
+isCorrectSeq grammar rule str = any ((==) True) (runAutomata2 grammar [rule] str)
 
 runGrammarParser :: Grammar -> Int -> String -> Either String Grammar
 runGrammarParser grammar ruleNum str = case (runAutomata grammarRules (grammarRules ! ruleNum) str) of
