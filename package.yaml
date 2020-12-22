@@ -34,6 +34,7 @@ dependencies:
 - array
 - streaming
 - unordered-containers
+- matrix
 
 library:
   source-dirs: src

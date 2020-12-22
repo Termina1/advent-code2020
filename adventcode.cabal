@@ -58,6 +58,7 @@ library
     , conduit
     , conduit-extra
     , containers
+    , matrix
     , mono-traversable
     , parsec
     , pretty-simple
@@ -83,6 +84,7 @@ executable adventcode-exe
     , conduit
     , conduit-extra
     , containers
+    , matrix
     , mono-traversable
     , parsec
     , pretty-simple
@@ -109,6 +111,7 @@ test-suite adventcode-test
     , conduit
     , conduit-extra
     , containers
+    , matrix
     , mono-traversable
     , parsec
     , pretty-simple

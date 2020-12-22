@@ -27,7 +27,7 @@ import LibLib
 
 someFunc :: IO ()
 someFunc = do
-  answer <- day20
+  answer <- day20_2
   putStrLn (show answer)
 
 find2Sum :: [Int] -> Int -> IntMap Int -> Int
