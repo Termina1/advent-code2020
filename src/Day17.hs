@@ -1,9 +1,9 @@
 module Day17
   ( day17,
     day17_2,
-    getSpaceIndex,
-    indexToCoords,
-    generateNeighbors
+    isPreviouslyActive,
+    isCurrentlyActive,
+    getCurrentActivation
   ) where
 
 import Data.Array.IO
