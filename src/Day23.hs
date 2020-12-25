@@ -23,7 +23,6 @@ import Data.Sequence (viewl, viewr, (<|), (|>), ViewR(..), ViewL(..), Seq, (><))
 import Data.Foldable
 import Data.Maybe
 import qualified Data.HashMap.Lazy as HM
-import Data.Hashable
 
 class Circle c where
   takeC :: Int -> c Int -> [Int]
